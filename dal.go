@@ -3,17 +3,15 @@ package main
 import "os"
 import "fmt"
 
-type dal struct {
-	file *os.File
-}
-
-func newDal(path string) (*dal, error) {
-	dal := &dal{}
+func newDal(path string, pageSize int) (*dal, error) {
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return nil, err
 	}
-	dal.file = file
+	dal := &dal{
+		file,
+		pageSize,
+	}
 	return dal, nil
 }
 
@@ -26,4 +24,27 @@ func (d *dal) close() error {
 		d.file = nil
 	}
 	return nil
+}
+
+func (d *dal) allocateEmptyPage() *page {
+	return &page{
+		data: make([]byte, d.pageSize),
+	}
+}
+
+func (d *dal) readPage(pageNum pgnum) (*page, error) {
+	page := d.allocateEmptyPage()
+	offset := int(pageNum) * d.pageSize
+
+	_, err := d.file.ReadAt(page.data, int64(offset))
+	if err != nil {
+		return nil, err
+	}
+	return page, err
+}
+
+func (d *dal) writePage(p *page) (error) {
+	offset := int64(p.num) * int64(d.pageSize)
+	_, err := d.file.WriteAt(p.data, offset)
+	return err
 }
