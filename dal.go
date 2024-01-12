@@ -3,7 +3,7 @@ package main
 import "os"
 import "fmt"
 
-func newDal(path string, pageSize int) (*dal, error) {
+func newDal(path string, pageSize int, maxpages pgnum) (*dal, error) {
 	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
 		return nil, err
@@ -11,6 +11,7 @@ func newDal(path string, pageSize int) (*dal, error) {
 	dal := &dal{
 		file,
 		pageSize,
+		newFreeList(maxpages),
 	}
 	return dal, nil
 }

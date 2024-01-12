@@ -12,4 +12,10 @@ type page struct {
 type dal struct {
 	file *os.File
 	pageSize int
+	*freelist
+}
+
+type freelist struct {
+	maxPage       pgnum
+	releasedPages []pgnum
 }
