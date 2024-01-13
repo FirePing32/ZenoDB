@@ -12,6 +12,7 @@ type page struct {
 type dal struct {
 	file *os.File
 	pageSize int
+	*meta
 	*freelist
 }
 
