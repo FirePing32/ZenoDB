@@ -20,3 +20,15 @@ type freelist struct {
 	maxPage       pgnum
 	releasedPages []pgnum
 }
+
+type Item struct {
+	key []byte
+	value []byte
+}
+
+type Node struct {
+	* dal
+	pageNum pgnum
+	items []*Item
+	childNodes []pgnum
+}
